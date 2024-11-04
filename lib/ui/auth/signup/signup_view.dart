@@ -1,17 +1,26 @@
 import 'package:flagkit/flagkit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:phonenumbers/phonenumbers.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todo_app/model/signup_model.dart';
 import 'package:todo_app/ui/auth/signup/signup_view_model.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends HookWidget {
   const SignupView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder.nonReactive(
+    final usernameController = useTextEditingController();
+    final emailController = useTextEditingController();
+    final phonenumberController =
+        useMemoized(() => PhoneNumberEditingController());
+    final passwordController = useTextEditingController();
+    final confirmPasswordController = useTextEditingController();
+
+    return ViewModelBuilder.reactive(
       viewModelBuilder: () => SignupViewModel(),
       builder: (context, viewModel, child) {
         return SafeArea(
@@ -36,6 +45,20 @@ class SignupView extends StatelessWidget {
                       style: TextStyle(fontSize: 16),
                     ),
 
+                    // USERNAME
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.03,
+                    ),
+                    const Text(
+                      'Username',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.01,
+                    ),
+                    _UsernameTextField(usernameController),
+
                     // EMAIL
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.03,
@@ -43,21 +66,21 @@ class SignupView extends StatelessWidget {
                     const Text(
                       'Email',
                       style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                     ),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-                    const _EmailTextField(),
+                    _EmailTextField(emailController),
 
-                    // Phone Number
+                    // PHONE NUMBER
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.02,
                     ),
                     const Text(
                       'Phone number',
                       style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                     ),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
@@ -66,6 +89,7 @@ class SignupView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: PhoneNumberField(
+                            controller: phonenumberController,
                             dialogTitle: 'Phone number',
                             prefixBuilder: (context, country) {
                               if (country != null) {
@@ -91,8 +115,10 @@ class SignupView extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                    // PASSWORD
                     SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.02,
+                      height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
                     const Text(
                       'Password',
@@ -102,23 +128,87 @@ class SignupView extends StatelessWidget {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-                    const _PasswordTextField(),
 
-                    // Password Forget
+                    _PasswordTextField(passwordController),
+
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-                    const _ForgotPassword(),
+                    //Confirm Password
+                    const Text(
+                      'Confirm Password',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.01,
+                    ),
+                    _ConfirmPasswordTextField(confirmPasswordController),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.01,
+                    ),
 
-                    // Signup Button
+                    // FORGOT PASSWORD
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.01,
+                    ),
+                    _ForgotPassword(),
+
+                    // SIGNUP BUTTON
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.04,
                     ),
-                    const _SignupButton(),
+                    GestureDetector(
+                      onTap: () {
+                        viewModel.signup(
+                            SignupModel(
+                                email: emailController.text,
+                                username: usernameController.text,
+                                phonenumber:
+                                    phonenumberController.value.toString(),
+                                password: passwordController.text,
+                                confirmPassword:
+                                    confirmPasswordController.text),
+                            context);
+                      },
+                      child: Center(
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width * 0.7,
+                          height: MediaQuery.sizeOf(context).height * 0.065,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: Center(
+                            child: viewModel.isBusy
+                                ? SizedBox(
+                                    width: 5,
+                                    height: 5,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      strokeAlign: 2,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    ),
+                                  )
+                                : Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
 
-                    // Social Signup
+                    // SOCIAL SIGNUP
                     SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.04,
+                      height: MediaQuery.sizeOf(context).height * 0.02,
                     ),
                     const _OrDivider(),
                     SizedBox(
@@ -132,7 +222,7 @@ class SignupView extends StatelessWidget {
                       onPressed: () {},
                     ),
 
-                    // Login
+                    // LOGIN
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.04,
                     ),
@@ -140,7 +230,7 @@ class SignupView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'You dont have an Account?',
+                          'You don\'t have an Account?',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSecondary,
@@ -171,13 +261,47 @@ class SignupView extends StatelessWidget {
   }
 }
 
-// Email TextField
-class _EmailTextField extends StatelessWidget {
-  const _EmailTextField();
+// Username TextField
+class _UsernameTextField extends StatelessWidget {
+  final controller;
+  const _UsernameTextField(this.controller);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: 'Your username',
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondary,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+        ),
+        prefixIcon: Icon(
+          CupertinoIcons.person,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            width: 0.2,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Email TextField
+class _EmailTextField extends StatelessWidget {
+  final controller;
+  const _EmailTextField(this.controller);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: 'example@gmail.com',
         hintStyle: TextStyle(
@@ -203,13 +327,16 @@ class _EmailTextField extends StatelessWidget {
 
 // Password TextField
 class _PasswordTextField extends StatelessWidget {
-  const _PasswordTextField();
+  final controller;
+  const _PasswordTextField(this.controller);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
+      obscureText: true,
       decoration: InputDecoration(
-        hintText: '123 456 789',
+        hintText: 'Password',
         hintStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSecondary,
           fontSize: 15,
@@ -234,15 +361,13 @@ class _PasswordTextField extends StatelessWidget {
 
 // Forgot Password Text
 class _ForgotPassword extends StatelessWidget {
-  const _ForgotPassword();
-
   @override
   Widget build(BuildContext context) {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Text(
-          'Forget Password?',
+          'Forgot Password?',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ],
@@ -250,31 +375,33 @@ class _ForgotPassword extends StatelessWidget {
   }
 }
 
-// Signup Button
-class _SignupButton extends StatelessWidget {
-  const _SignupButton();
+// Confirm Password TextField
+class _ConfirmPasswordTextField extends StatelessWidget {
+  final TextEditingController controller;
+  const _ConfirmPasswordTextField(this.controller);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Center(
-        child: Container(
-          width: MediaQuery.sizeOf(context).width * 0.7,
-          height: MediaQuery.sizeOf(context).height * 0.065,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          child: Center(
-            child: Text(
-              'Sign up',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
+    return TextField(
+      controller: controller,
+      obscureText: true,
+      decoration: InputDecoration(
+        hintText: 'Confirm Password',
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondary,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+        ),
+        prefixIcon: Icon(
+          Icons.lock_outline_rounded,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
+        suffixIcon: const Icon(CupertinoIcons.eye_slash),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            width: 0.2,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
         ),
       ),

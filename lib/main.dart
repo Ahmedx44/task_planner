@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/theme/theme.dart';
 import 'package:todo_app/ui/auth/login/login_view.dart';
 import 'package:todo_app/ui/auth/signup/signup_view.dart';
 import 'package:todo_app/ui/onboarding/onboarding_view.dart';
 
 void main() {
+  setupLocator();
   runApp(MyApp());
 }
 

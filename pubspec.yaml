@@ -48,6 +48,8 @@ dependencies:
   social_login_buttons: ^1.0.7
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  flutter_hooks:
 
 dev_dependencies:
   flutter_test:
