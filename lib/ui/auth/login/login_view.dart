@@ -94,7 +94,28 @@ class LoginView extends StatelessWidget {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.04,
                     ),
-                    const _SignupPrompt(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Don\'t have an account? ',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            viewModel.navigatetosignup(context);
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -243,38 +264,6 @@ class _OrDivider extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Signup Prompt
-class _SignupPrompt extends StatelessWidget {
-  const _SignupPrompt();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: RichText(
-        text: TextSpan(
-          style: const TextStyle(),
-          children: [
-            TextSpan(
-              text: 'Don\'t have an account?',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
-            const TextSpan(
-              text: ' Sign Up',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
