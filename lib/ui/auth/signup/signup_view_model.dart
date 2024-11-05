@@ -12,11 +12,6 @@ class SignupViewModel extends BaseViewModel {
 
   signup(SignupModel signupModel, BuildContext context) async {
     setBusy(true);
-    if (signupModel.password != signupModel.confirmPassword) {
-      setBusy(false);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('password doesn\'t much')));
-    }
 
     final result = await locator<AuthService>().signup(SignupModel(
         email: signupModel.email,
@@ -27,12 +22,16 @@ class SignupViewModel extends BaseViewModel {
 
     result.fold((error) {
       setBusy(false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
+          content: Text(error)));
     }, (success) {
       setBusy(false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(success)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
+          content: Text(success)));
       context.go('/login');
     });
   }

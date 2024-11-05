@@ -26,13 +26,10 @@ class AuthServiceImpl extends AuthService {
 
   @override
   Future<Either<String, String>> signup(SignupModel signupModel) async {
-    if (signupModel.password != signupModel.confirmPassword) {
-      return const Left('Password doesn\'t much');
-    }
-
     try {
-      final user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: signupModel.email, password: signupModel.password);
+      final UserCredential user = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: signupModel.email, password: signupModel.password);
 
       await FirebaseFirestore.instance.collection(user.user!.uid).add({
         'username': signupModel.username,
@@ -42,7 +39,7 @@ class AuthServiceImpl extends AuthService {
 
       return const Right('User Succesfully Created');
     } catch (e) {
-      return const Left('Something went Wrong');
+      return Left(e.toString());
     }
   }
 }
