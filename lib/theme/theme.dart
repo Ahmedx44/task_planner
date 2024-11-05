@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
 final ThemeData lightMode = ThemeData(
-  colorScheme: ColorScheme.light(
-    surface: Colors.white,
-    onSurface: const Color.fromARGB(255, 224, 224, 224),
+  colorScheme: const ColorScheme.light(
     primary: Colors.blue,
-    secondary: Colors.blueAccent,
     onPrimary: Colors.white,
-    onPrimaryContainer: Colors.grey.shade600,
-    onSecondary: Colors.black,
+    surface: Color.fromARGB(255, 241, 241, 241),
+    onSurface: Color.fromARGB(255, 212, 212, 212),
+    onSecondary: Colors.black87,
   ),
+  scaffoldBackgroundColor: Colors.white,
   textTheme: const TextTheme(
     displayLarge: TextStyle(
         color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold),
     displayMedium: TextStyle(
-        color: Colors.black, fontSize: 28, fontWeight: FontWeight.w600),
-    bodyLarge: TextStyle(color: Colors.black, fontSize: 16),
-    bodyMedium: TextStyle(color: Colors.black87, fontSize: 14),
+        color: Colors.black87, fontSize: 28, fontWeight: FontWeight.w600),
+    bodyLarge: TextStyle(color: Colors.black87, fontSize: 16),
+    bodyMedium: TextStyle(color: Colors.black54, fontSize: 14),
     titleMedium: TextStyle(
         color: Colors.black87, fontSize: 18, fontWeight: FontWeight.w500),
     titleSmall: TextStyle(color: Colors.black54, fontSize: 16),
@@ -28,18 +27,18 @@ final ThemeData lightMode = ThemeData(
 
 final ThemeData darkMode = ThemeData(
   colorScheme: ColorScheme.dark(
-    surface: const Color.fromARGB(255, 29, 29, 29),
-    onSurface: Colors.black,
     primary: Colors.blue,
-    secondary: Colors.blueAccent,
-    onPrimaryContainer: Colors.grey.shade600,
+    onPrimary: const Color.fromARGB(255, 20, 20, 20),
+    surface: const Color.fromARGB(255, 31, 31, 31),
+    onSurface: const Color.fromARGB(255, 26, 26, 26),
     onSecondary: Colors.white,
   ),
+  scaffoldBackgroundColor: const Color(0xFF121212),
   textTheme: const TextTheme(
     displayLarge: TextStyle(
         color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
     displayMedium: TextStyle(
-        color: Colors.white, fontSize: 28, fontWeight: FontWeight.w600),
+        color: Colors.white70, fontSize: 28, fontWeight: FontWeight.w600),
     bodyLarge: TextStyle(color: Colors.white, fontSize: 16),
     bodyMedium: TextStyle(color: Colors.white70, fontSize: 14),
     titleMedium: TextStyle(

@@ -35,10 +35,12 @@ class SignupView extends HookWidget {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-                    const Text(
+                    Text(
                       'Sign up',
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSecondary),
                     ),
                     const Text(
                       'Create account for Free',
@@ -255,13 +257,13 @@ class SignupView extends HookWidget {
                                     ),
                                   )
                                 : Text(
-                                    'Login',
+                                    'Signup',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onSurface,
+                                          .onPrimary,
                                     ),
                                   ),
                           ),
@@ -282,7 +284,9 @@ class SignupView extends HookWidget {
                       backgroundColor: Theme.of(context).colorScheme.onSurface,
                       textColor: Theme.of(context).colorScheme.onSecondary,
                       buttonType: SocialLoginButtonType.google,
-                      onPressed: () {},
+                      onPressed: () {
+                        viewModel.googleSignin(context);
+                      },
                     ),
 
                     // LOGIN

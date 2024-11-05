@@ -54,4 +54,20 @@ class SignupViewModel extends BaseViewModel {
       context.go('/login');
     });
   }
+
+  Future<void> googleSignin(BuildContext context) async {
+    setBusy(true);
+    final result = await locator<AuthService>().signinWithGoogle();
+
+    result.fold((error) {
+      setBusy(false);
+      return ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+    }, (success) {
+      context.go('/home');
+      setBusy(false);
+      return ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('User Sucessfully Logged in')));
+    });
+  }
 }

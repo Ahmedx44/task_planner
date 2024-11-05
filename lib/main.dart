@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/theme/theme.dart';
+import 'package:todo_app/ui/auth/autGate/authGate_view.dart';
 import 'package:todo_app/ui/auth/login/login_view.dart';
 import 'package:todo_app/ui/auth/signup/signup_view.dart';
+import 'package:todo_app/ui/home/home_view.dart';
 import 'package:todo_app/ui/onboarding/onboarding_view.dart';
 
 void main() async {
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
   final _router = GoRouter(routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const OnboardingView(),
+      builder: (context, state) => const AuthgateView(),
     ),
     GoRoute(
       path: '/signup',
@@ -30,6 +32,14 @@ class MyApp extends StatelessWidget {
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginView(),
+    ),
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingView(),
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => const HomeView(),
     )
   ]);
 
