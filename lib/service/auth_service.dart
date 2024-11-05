@@ -31,7 +31,10 @@ class AuthServiceImpl extends AuthService {
           .createUserWithEmailAndPassword(
               email: signupModel.email, password: signupModel.password);
 
-      await FirebaseFirestore.instance.collection(user.user!.uid).add({
+      await FirebaseFirestore.instance
+          .collection('User')
+          .doc(user.user!.uid)
+          .set({
         'username': signupModel.username,
         'email': signupModel.email,
         'phone_number': signupModel.phonenumber

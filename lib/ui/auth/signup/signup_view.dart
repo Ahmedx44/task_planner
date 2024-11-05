@@ -102,6 +102,7 @@ class SignupView extends HookWidget {
                               }
                             },
                             style: TextStyle(
+                              fontSize: 13,
                               color: Theme.of(context).colorScheme.onSecondary,
                             ),
                             countryCodeWidth:
@@ -128,12 +129,43 @@ class SignupView extends HookWidget {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-
-                    _PasswordTextField(passwordController),
-
+                    TextField(
+                      controller: passwordController,
+                      obscureText: viewModel.obscurePassword,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            viewModel.togglePasswordVisibility();
+                          },
+                          icon: viewModel.obscurePassword
+                              ? const Icon(CupertinoIcons.eye)
+                              : const Icon(CupertinoIcons.eye_slash),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide(
+                            width: 0.2,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
+
                     //Confirm Password
                     const Text(
                       'Confirm Password',
@@ -143,9 +175,39 @@ class SignupView extends HookWidget {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.01,
                     ),
-                    _ConfirmPasswordTextField(confirmPasswordController),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.01,
+
+                    TextField(
+                      controller: confirmPasswordController,
+                      obscureText: viewModel.obscureConfirmPassword,
+                      decoration: InputDecoration(
+                        hintText: 'Confirm Password',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            viewModel.toggleConfirmPasswordVisibility();
+                          },
+                          icon: viewModel.obscureConfirmPassword
+                              ? const Icon(CupertinoIcons.eye)
+                              : const Icon(CupertinoIcons.eye_slash),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide(
+                            width: 0.2,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
+                        ),
+                      ),
                     ),
 
                     // FORGOT PASSWORD
@@ -196,9 +258,10 @@ class SignupView extends HookWidget {
                                     'Login',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onSecondary,
+                                          .onSurface,
                                     ),
                                   ),
                           ),
@@ -238,7 +301,7 @@ class SignupView extends HookWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            viewModel.navigatetologin(context);
+                            viewModel.navigateToLogin(context);
                           },
                           child: const Text(
                             'Login',
@@ -325,40 +388,6 @@ class _EmailTextField extends StatelessWidget {
   }
 }
 
-// Password TextField
-class _PasswordTextField extends StatelessWidget {
-  final controller;
-  const _PasswordTextField(this.controller);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: 'Password',
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSecondary,
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-        ),
-        prefixIcon: Icon(
-          Icons.lock_outline_rounded,
-          color: Theme.of(context).colorScheme.onSecondary,
-        ),
-        suffixIcon: const Icon(CupertinoIcons.eye_slash),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            width: 0.2,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // Forgot Password Text
 class _ForgotPassword extends StatelessWidget {
   @override
@@ -371,40 +400,6 @@ class _ForgotPassword extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ],
-    );
-  }
-}
-
-// Confirm Password TextField
-class _ConfirmPasswordTextField extends StatelessWidget {
-  final TextEditingController controller;
-  const _ConfirmPasswordTextField(this.controller);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: 'Confirm Password',
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSecondary,
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-        ),
-        prefixIcon: Icon(
-          Icons.lock_outline_rounded,
-          color: Theme.of(context).colorScheme.onSecondary,
-        ),
-        suffixIcon: const Icon(CupertinoIcons.eye_slash),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            width: 0.2,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-      ),
     );
   }
 }
