@@ -1,7 +1,9 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked/stacked.dart';
 import 'package:todo_app/assets/app_image.dart';
+import 'package:todo_app/ui/main/main_view_model.dart';
 import 'package:todo_app/ui/main/widget/mini_card.dart';
 import 'package:todo_app/ui/main/widget/task_card.dart';
 
@@ -10,85 +12,95 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.01,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+    return ViewModelBuilder.nonReactive(
+      viewModelBuilder: () => MainViewModel(),
+      builder: (context, viewModel, child) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.01,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Welcome, ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Text(
+                                'Welcome, ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
+                                    fontSize: 22),
+                              ),
+                              Text(
+                                'Ahmed',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary),
+                              )
+                            ],
+                          ),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                CupertinoIcons.time,
                                 color:
                                     Theme.of(context).colorScheme.onSecondary,
-                                fontSize: 22),
-                          ),
-                          Text(
-                            'Ahmed',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 17,
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary),
-                          )
+                              ))
                         ],
                       ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            CupertinoIcons.time,
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          ))
-                    ],
-                  ),
+                    ),
+
+                    //Task current
+                    _taskCardDisplayer(context),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.03,
+                    ),
+
+                    //Current Inprogress Tasks
+                    _inProgressTasks(context),
+                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+
+                    //All Tasks
+                    _allTask(context),
+                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+
+                    //Completed Tasks
+                    _completedTask(context),
+                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+
+                    //Missed Tasks
+                    _lateTasks(context)
+                  ],
                 ),
-
-                //Task current
-                _taskCardDisplayer(context),
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.03,
-                ),
-
-                //Current Inprogress Tasks
-                _inProgressTasks(context),
-                SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
-
-                //All Tasks
-                _allTask(context),
-                SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
-
-                //Completed Tasks
-                _completedTask(context),
-                SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
-
-                //Missed Tasks
-                _lateTasks(context)
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        shape: const CircleBorder(),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(
-          CupertinoIcons.add,
-          color: Colors.white,
-        ),
-      ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              viewModel.showCreateNewTask(context);
+            },
+            shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: const Icon(
+              CupertinoIcons.add,
+              color: Colors.white,
+            ),
+          ),
+        );
+      },
     );
   }
 

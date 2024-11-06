@@ -18,11 +18,12 @@ class HomeView extends StatelessWidget {
       builder: (context, viewModel, child) => Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           bottomNavigationBar: BottomBarDefault(
+              paddingVertical: 25,
               items: const [
-                TabItem(title: 'Home', icon: CupertinoIcons.home),
-                TabItem(title: 'Calendar', icon: CupertinoIcons.calendar),
-                TabItem(title: 'Audio', icon: CupertinoIcons.mic),
-                TabItem(title: 'Profile', icon: CupertinoIcons.person),
+                TabItem(icon: CupertinoIcons.home),
+                TabItem(icon: CupertinoIcons.calendar),
+                TabItem(icon: CupertinoIcons.mic),
+                TabItem(icon: CupertinoIcons.person),
               ],
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               color: Theme.of(context).colorScheme.onSecondary,
