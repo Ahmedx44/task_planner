@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todo_app/app/locator.dart';
+import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/service/task_service.dart';
+import 'package:go_router/go_router.dart';
 
 class NewtaskViewModel extends BaseViewModel {
   List<String> subtasks = [];
@@ -60,4 +64,30 @@ class NewtaskViewModel extends BaseViewModel {
     'purple': Colors.purple,
     'lightpurple': Colors.purpleAccent
   };
+
+  addTask(TaskModel taskmodel, BuildContext context) async {
+    setBusy(true);
+    final result = await locator<TaskService>().addTask(TaskModel(
+        title: taskmodel.title,
+        description: taskmodel.description,
+        additionalInfo: taskmodel.additionalInfo,
+        startTime: taskmodel.startTime,
+        endTime: taskmodel.endTime,
+        category: taskmodel.category,
+        priority: taskmodel.priority,
+        color: taskmodel.color));
+
+    result.fold((error) {
+      setBusy(false);
+      return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),
+          content: Text(error.toString())));
+    }, (success) {
+      setBusy(false);
+      context.pop();
+      return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 1),
+          content: Text(success.toString())));
+    });
+  }
 }

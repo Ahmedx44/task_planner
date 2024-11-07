@@ -11,6 +11,7 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:todo_app/service/auth_service.dart' as _i744;
+import 'package:todo_app/service/task_service.dart' as _i126;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -24,6 +25,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.lazySingleton<_i744.AuthService>(() => _i744.AuthServiceImpl());
+    gh.lazySingleton<_i126.TaskService>(() => _i126.TaskServiceImpl());
     return this;
   }
 }

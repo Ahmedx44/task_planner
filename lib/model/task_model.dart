@@ -10,7 +10,7 @@ class TaskModel {
   final DateTime endTime;
   final String category;
   final String priority;
-  final Color color;
+  final Color? color;
   final bool isCompleted;
 
   TaskModel({

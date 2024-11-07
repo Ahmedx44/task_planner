@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/ui/new_task/newTask_view_model.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:todo_app/utils/category_enum.dart';
@@ -59,6 +60,7 @@ class NewtaskView extends HookWidget {
 
                     // Title
                     TextField(
+                      controller: titleController,
                       decoration: InputDecoration(
                         fillColor: Theme.of(context).colorScheme.onPrimary,
                         filled: true,
@@ -89,6 +91,7 @@ class NewtaskView extends HookWidget {
                                   MediaQuery.sizeOf(context).height * 0.01,
                             ),
                             child: TextField(
+                              controller: descriptionController,
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(
                                   borderSide: BorderSide.none,
@@ -419,7 +422,19 @@ class NewtaskView extends HookWidget {
                     ),
                     Center(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          viewModel.addTask(
+                              TaskModel(
+                                  title: titleController.text,
+                                  description: descriptionController.text,
+                                  additionalInfo: additionalInfoController.text,
+                                  startTime: startTime.value,
+                                  endTime: endTime.value,
+                                  category: selectedCategory.value.toString(),
+                                  priority: selectedPriority.value.toString(),
+                                  color: selectedColor.value),
+                              context);
+                        },
                         child: Container(
                           width: MediaQuery.sizeOf(context).width * 0.7,
                           padding: EdgeInsets.symmetric(
@@ -429,13 +444,25 @@ class NewtaskView extends HookWidget {
                               borderRadius: BorderRadius.circular(20),
                               color: Theme.of(context).colorScheme.primary),
                           child: Center(
-                            child: Text(
-                              'Create Task',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary),
-                            ),
+                            child: viewModel.isBusy
+                                ? SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    ),
+                                  )
+                                : Text(
+                                    'Create Task',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                  ),
                           ),
                         ),
                       ),

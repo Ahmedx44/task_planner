@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todo_app/assets/app_image.dart';
+import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/ui/main/main_view_model.dart';
 import 'package:todo_app/ui/main/widget/mini_card.dart';
 import 'package:todo_app/ui/main/widget/task_card.dart';
@@ -142,45 +143,72 @@ class MainView extends StatelessWidget {
     );
   }
 
-  _inProgressTasks(context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.sizeOf(context).width * 0.05),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  _inProgressTasks(BuildContext context) {
+    return ViewModelBuilder<MainViewModel>.reactive(
+      viewModelBuilder: () => MainViewModel(),
+      onViewModelReady: (viewModel) => viewModel.getInCompeleteTasks(context),
+      builder: (context, viewModel, child) {
+        if (viewModel.isBusy) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (viewModel.hasError) {
+          return Center(child: Text('Error: ${viewModel.error}'));
+        }
+
+        List<TaskModel> tasks = viewModel.inCompleteTasks;
+
+        if (tasks.isEmpty) {
+          return const Center(child: Text('No tasks in progress.'));
+        }
+
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+          ),
+          child: Column(
             children: [
-              Text(
-                'Inprogress',
-                style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSecondary),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'In Progress',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text('${viewModel.inCompleteTasks.length}'),
+                      const Icon(Icons.navigate_next_rounded),
+                    ],
+                  ),
+                ],
               ),
-              const Row(
-                children: [Text('6'), Icon(Icons.navigate_next_rounded)],
-              )
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    return TaskCard(
+                      title: task.title,
+                      description: task.description,
+
+                      color: task.color ?? Colors.blue, // Fallback color
+                    );
+                  },
+                ),
+              ),
             ],
           ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.01,
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.35,
-            child: ListView(
-              children: const [
-                TaskCard(
-                  color: Colors.red,
-                ),
-                TaskCard(
-                  color: Colors.blue,
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
