@@ -191,17 +191,12 @@ class MainView extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
+                height: MediaQuery.of(context).size.height * 0.29,
                 child: ListView.builder(
                   itemCount: tasks.length,
                   itemBuilder: (context, index) {
                     final task = tasks[index];
-                    return TaskCard(
-                      title: task.title,
-                      description: task.description,
-
-                      color: task.color ?? Colors.blue, // Fallback color
-                    );
+                    return TaskCard(task: task);
                   },
                 ),
               ),
