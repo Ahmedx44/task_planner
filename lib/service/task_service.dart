@@ -11,6 +11,8 @@ abstract class TaskService {
   Future<Either<String, String>> addTask(TaskModel taskModel);
   Future<Either<String, List<TaskModel>>> getUserTasks();
   Future<Either<String, List<TaskModel>>> getIncompleteTasks();
+  Future<Either<String, List<TaskModel>>> getCompleteTasks();
+  Future<Either<String, List<TaskModel>>> getLateTasks();
 }
 
 @LazySingleton(as: TaskService)
@@ -103,7 +105,8 @@ class TaskServiceImpl extends TaskService {
             .whereType<Map<String, dynamic>>()
             .where((task) =>
                 !task['isCompleted'] &&
-                task['endTime'].toDate().isAfter(DateTime.now()))
+                task['endTime'].toDate().isAfter(DateTime
+                    .now())) // uncompleted tasks and also tasks that are on past they're end time
             .map((task) => TaskModel(
                   id: task['id'],
                   title: task['title'],
@@ -120,6 +123,97 @@ class TaskServiceImpl extends TaskService {
 
         print(incompleteTasks.length);
         return Right(incompleteTasks);
+      } else {
+        return const Left('User document does not exist');
+      }
+    } catch (e) {
+      return Left('Error retrieving tasks: $e');
+    }
+  }
+
+  @override
+  Future<Either<String, List<TaskModel>>> getCompleteTasks() async {
+    try {
+      final userRef = FirebaseFirestore.instance.collection('User').doc(user);
+      final userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        final taskIds = List<String>.from(userDoc.data()?['tasks'] ?? []);
+
+        final tasks = await Future.wait(
+          taskIds.map((id) => FirebaseFirestore.instance
+              .collection('tasks')
+              .doc(id)
+              .get()
+              .then((doc) => doc.data())),
+        );
+
+        final completeTasks = tasks
+            .whereType<Map<String, dynamic>>()
+            .where(
+                (task) => task['isCompleted']) //tasks that are complete or true
+            .map((task) => TaskModel(
+                  id: task['id'],
+                  title: task['title'],
+                  description: task['description'],
+                  additionalInfo: task['additionalInfo'],
+                  startTime: (task['startTime'] as Timestamp).toDate(),
+                  endTime: (task['endTime'] as Timestamp).toDate(),
+                  category: task['category'],
+                  priority: task['priority'],
+                  color: task['color'] != null ? Color(task['color']) : null,
+                  isCompleted: task['isCompleted'],
+                ))
+            .toList();
+
+        print(completeTasks.length);
+        return Right(completeTasks);
+      } else {
+        return const Left('User document does not exist');
+      }
+    } catch (e) {
+      return Left('Error retrieving tasks: $e');
+    }
+  }
+
+  @override
+  Future<Either<String, List<TaskModel>>> getLateTasks() async {
+    try {
+      final userRef = FirebaseFirestore.instance.collection('User').doc(user);
+      final userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        final taskIds = List<String>.from(userDoc.data()?['tasks'] ?? []);
+
+        final tasks = await Future.wait(
+          taskIds.map((id) => FirebaseFirestore.instance
+              .collection('tasks')
+              .doc(id)
+              .get()
+              .then((doc) => doc.data())),
+        );
+
+        final completeTasks = tasks
+            .whereType<Map<String, dynamic>>()
+            .where((task) =>
+                !task['isCompleted'] &&
+                task['endTime'].toDate().isBefore(DateTime.now()))
+            .map((task) => TaskModel(
+                  id: task['id'],
+                  title: task['title'],
+                  description: task['description'],
+                  additionalInfo: task['additionalInfo'],
+                  startTime: (task['startTime'] as Timestamp).toDate(),
+                  endTime: (task['endTime'] as Timestamp).toDate(),
+                  category: task['category'],
+                  priority: task['priority'],
+                  color: task['color'] != null ? Color(task['color']) : null,
+                  isCompleted: task['isCompleted'],
+                ))
+            .toList();
+
+        print(completeTasks.length);
+        return Right(completeTasks);
       } else {
         return const Left('User document does not exist');
       }

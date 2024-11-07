@@ -23,6 +23,6 @@ class TaskModel {
     required this.category,
     required this.priority,
     required this.color,
-    this.isCompleted = false,
-  }) : id = id ?? Uuid().v4(); // Generate id if not provided
+    this.isCompleted = true,
+  }) : id = id ?? const Uuid().v4(); // Generate id if not provided
 }

@@ -376,7 +376,7 @@ class NewtaskView extends HookWidget {
                       height: MediaQuery.sizeOf(context).height * 0.02,
                     ),
                     Text(
-                      'Priority Level',
+                      'Color',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,

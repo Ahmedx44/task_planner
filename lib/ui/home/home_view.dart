@@ -35,13 +35,13 @@ class HomeView extends StatelessWidget {
   }
 
   selectedPage(index) {
-    if (index == 3) {
+    if (index == 0) {
       return const MainView();
     } else if (index == 1) {
       return const CalenderView();
     } else if (index == 2) {
       return const AudioView();
-    } else if (index == 0) {
+    } else if (index == 3) {
       return const ProfileView();
     }
   }

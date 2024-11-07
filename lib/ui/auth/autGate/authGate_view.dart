@@ -18,19 +18,18 @@ class AuthgateView extends StatelessWidget {
           stream: viewModel.userStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold();
+              return const Scaffold();
             }
             if (snapshot.hasData) {
               return const HomeView();
             } else {
-              // Check if it's the user's first time using the app
               return FutureBuilder<bool>(
                 future: viewModel.getFirstTime(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Scaffold();
+                    return const Scaffold();
                   }
-                  // Show OnboardingView if it's the user's first time; otherwise, show LoginView
+
                   return snapshot.data == true
                       ? const LoginView()
                       : const OnboardingView();

@@ -26,11 +26,11 @@ final ThemeData lightMode = ThemeData(
 );
 
 final ThemeData darkMode = ThemeData(
-  colorScheme: ColorScheme.dark(
+  colorScheme: const ColorScheme.dark(
     primary: Colors.blue,
-    onPrimary: const Color.fromARGB(255, 20, 20, 20),
-    surface: const Color.fromARGB(255, 31, 31, 31),
-    onSurface: const Color.fromARGB(255, 26, 26, 26),
+    onPrimary: Color.fromARGB(255, 20, 20, 20),
+    surface: Color.fromARGB(255, 31, 31, 31),
+    onSurface: Color.fromARGB(255, 26, 26, 26),
     onSecondary: Colors.white,
   ),
   scaffoldBackgroundColor: const Color(0xFF121212),
