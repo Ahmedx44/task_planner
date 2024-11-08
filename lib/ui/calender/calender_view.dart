@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:todo_app/model/task_model.dart';
-
 import 'package:todo_app/ui/calender/calender_view_model.dart';
 import 'package:todo_app/ui/calender/data%20source/calender_data_source.dart';
 
@@ -15,72 +14,81 @@ class CalendarVieww extends StatelessWidget {
       viewModelBuilder: () => CalendarViewModel(),
       onViewModelReady: (model) => model.loadUserTasks(),
       builder: (context, model, child) {
+        final textColor = Theme.of(context).colorScheme.onBackground;
+
         return Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.onPrimary,
-            title: const Text("Calendar"),
+            title: Text(
+              "Calendar",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
             centerTitle: true,
+            elevation: 0,
           ),
-          body: Column(
-            children: [
-              const SizedBox(height: 16),
-              // Calendar View (Displays tasks)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: SfCalendar(
-                    dataSource: TaskCalendarDataSource(model.appointments),
-                    view: CalendarView.week,
-                    initialSelectedDate: DateTime.now(),
-                    initialDisplayDate: model.selectedDate,
-                    showDatePickerButton: true,
-                    appointmentTextStyle:
-                        Theme.of(context).textTheme.bodyLarge!,
-                    todayHighlightColor: Theme.of(context).colorScheme.primary,
-                    headerStyle: CalendarHeaderStyle(
-                      textAlign: TextAlign.center,
-                      textStyle: Theme.of(context).textTheme.titleMedium!,
-                    ),
-                    timeSlotViewSettings: TimeSlotViewSettings(
-                      timeTextStyle: Theme.of(context).textTheme.titleSmall!,
-                    ),
-                    onTap: (calendarTapDetails) {
-                      if (calendarTapDetails.targetElement ==
-                          CalendarElement.appointment) {
-                        final task = calendarTapDetails.appointments?.first;
-                        model.onTaskTapped(
-                            task as TaskModel); // Ensure it's a TaskModel
-                      }
-                    },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SfCalendar(
+              blackoutDatesTextStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+              dataSource: TaskCalendarDataSource(model.appointments),
+              view: CalendarView.month,
+              headerStyle: CalendarHeaderStyle(
+                  textStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      fontWeight: FontWeight.bold),
+                  backgroundColor: Theme.of(context).colorScheme.surface),
+              initialSelectedDate: DateTime.now(),
+              showTodayButton: true,
+              initialDisplayDate: model.selectedDate,
+              weekNumberStyle: const WeekNumberStyle(
+                  textStyle: TextStyle(color: Colors.white)),
+              todayTextStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+              viewHeaderStyle: ViewHeaderStyle(
+                  dayTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary),
+                  dateTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary)),
+              appointmentTextStyle: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.w500,
+              ),
+              todayHighlightColor: Theme.of(context).colorScheme.secondary,
+              cellBorderColor: Colors.transparent,
+              monthViewSettings: MonthViewSettings(
+                appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+                dayFormat: 'EEE',
+                showAgenda: true,
+                showTrailingAndLeadingDates: true,
+                agendaStyle: AgendaStyle(
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  appointmentTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                  dateTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                  dayTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
               ),
-            ],
+              onTap: (calendarTapDetails) {
+                if (calendarTapDetails.targetElement ==
+                    CalendarElement.appointment) {
+                  final task = calendarTapDetails.appointments?.first;
+                  model.onTaskTapped(task as TaskModel);
+                }
+              },
+            ),
           ),
         );
       },
     );
-  }
-
-  String _getWeekdayAbbreviation(int weekday) {
-    switch (weekday) {
-      case DateTime.monday:
-        return "Mon";
-      case DateTime.tuesday:
-        return "Tue";
-      case DateTime.wednesday:
-        return "Wed";
-      case DateTime.thursday:
-        return "Thu";
-      case DateTime.friday:
-        return "Fri";
-      case DateTime.saturday:
-        return "Sat";
-      case DateTime.sunday:
-        return "Sun";
-      default:
-        return "";
-    }
   }
 }

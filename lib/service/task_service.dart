@@ -121,7 +121,6 @@ class TaskServiceImpl extends TaskService {
                 ))
             .toList();
 
-        print(incompleteTasks.length);
         return Right(incompleteTasks);
       } else {
         return const Left('User document does not exist');
@@ -166,7 +165,6 @@ class TaskServiceImpl extends TaskService {
                 ))
             .toList();
 
-        print(completeTasks.length);
         return Right(completeTasks);
       } else {
         return const Left('User document does not exist');
