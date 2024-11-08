@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 class TaskModel {
@@ -25,4 +26,19 @@ class TaskModel {
     required this.color,
     this.isCompleted = true,
   }) : id = id ?? const Uuid().v4(); // Generate id if not provided
+
+  factory TaskModel.fromFirestore(Map<String, dynamic> json, String id) {
+    return TaskModel(
+      id: id,
+      additionalInfo: json['additionalInfo'],
+      title: json['title'],
+      description: json['description'],
+      startTime: (json['startTime'] as Timestamp).toDate(),
+      endTime: (json['endTime'] as Timestamp).toDate(),
+      category: json['category'],
+      priority: json['priority'],
+      isCompleted: json['isCompleted'],
+      color: json['color'],
+    );
+  }
 }

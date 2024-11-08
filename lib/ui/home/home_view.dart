@@ -38,7 +38,7 @@ class HomeView extends StatelessWidget {
     if (index == 0) {
       return const MainView();
     } else if (index == 1) {
-      return const CalenderView();
+      return CalendarVieww();
     } else if (index == 2) {
       return const AudioView();
     } else if (index == 3) {

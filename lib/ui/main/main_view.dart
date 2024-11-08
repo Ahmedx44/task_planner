@@ -327,12 +327,34 @@ class MainView extends StatelessWidget {
           return Center(child: Text('Error: ${viewModel.error}'));
         }
 
-        List<TaskModel> tasks = viewModel.completeTasks;
+        List<TaskModel> tasks = viewModel.lateTasks;
 
         if (tasks.isEmpty) {
           return Container(
-              height: MediaQuery.of(context).size.height * 0.16,
-              child: const Center(child: Text('No Late tasks.')));
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+              ),
+              height: MediaQuery.of(context).size.height * 0.35,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height * 0.022,
+                  ),
+                  Text(
+                    'Late',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height * 0.1,
+                  ),
+                  const Center(child: Text('No late Task.')),
+                ],
+              ));
         }
 
         return Container(
@@ -345,17 +367,17 @@ class MainView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Completed',
+                  const Text(
+                    'Late ',
                     style: TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Colors.red,
                     ),
                   ),
                   Row(
                     children: [
-                      Text('${viewModel.completeTasks.length}'),
+                      Text('${viewModel.lateTasks.length}'),
                       const Icon(Icons.navigate_next_rounded),
                     ],
                   ),

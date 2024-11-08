@@ -218,7 +218,7 @@ class TaskServiceImpl extends TaskService {
         return const Left('User document does not exist');
       }
     } catch (e) {
-      return Left('Error retrieving tasks: $e');
+      return Left(e.toString());
     }
   }
 }
