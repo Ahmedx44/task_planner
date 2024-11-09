@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/firebase_options.dart';
+import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/theme/theme.dart';
 import 'package:todo_app/ui/auth/autGate/authGate_view.dart';
 import 'package:todo_app/ui/auth/login/login_view.dart';
 import 'package:todo_app/ui/auth/signup/signup_view.dart';
 import 'package:todo_app/ui/home/home_view.dart';
 import 'package:todo_app/ui/onboarding/onboarding_view.dart';
+import 'package:todo_app/ui/task_detail/task_detail_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +42,14 @@ class MyApp extends StatelessWidget {
     GoRoute(
       path: '/home',
       builder: (context, state) => const HomeView(),
-    )
+    ),
+    GoRoute(
+      path: '/task_detail',
+      builder: (BuildContext context, GoRouterState state) {
+        final task = state.extra as TaskModel;
+        return TaskDetailView(task: task);
+      },
+    ),
   ]);
 
   @override

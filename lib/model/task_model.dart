@@ -15,7 +15,7 @@ class TaskModel {
   final bool isCompleted;
 
   TaskModel({
-    String? id, // Make `id` optional
+    String? id,
     required this.title,
     required this.description,
     required this.additionalInfo,
@@ -24,7 +24,7 @@ class TaskModel {
     required this.category,
     required this.priority,
     required this.color,
-    this.isCompleted = true,
+    this.isCompleted = false,
   }) : id = id ?? const Uuid().v4(); // Generate id if not provided
 
   factory TaskModel.fromFirestore(Map<String, dynamic> json, String id) {

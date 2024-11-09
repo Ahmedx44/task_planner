@@ -13,8 +13,9 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder.nonReactive(
+    return ViewModelBuilder.reactive(
       viewModelBuilder: () => MainViewModel(),
+      onViewModelReady: (viewModel) => viewModel.initializeData(),
       builder: (context, viewModel, child) {
         return RefreshIndicator(
           onRefresh: viewModel.refreshContent,
@@ -67,23 +68,23 @@ class MainView extends StatelessWidget {
                       ),
 
                       //Task current
-                      _taskCardDisplayer(context),
+                      _taskCardDisplayer(context, viewModel),
                       SizedBox(
                         height: MediaQuery.sizeOf(context).height * 0.03,
                       ),
 
                       //Current Inprogress Tasks
-                      _inProgressTasks(context),
+                      _inProgressTasks(context, viewModel),
                       SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.03),
 
                       //Completed Tasks
-                      _completedTask(context),
+                      _completedTask(context, viewModel),
                       SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.03),
 
                       //Missed Tasks
-                      _lateTasks(context)
+                      _lateTasks(context, viewModel)
                     ],
                   ),
                 ),
@@ -106,7 +107,7 @@ class MainView extends StatelessWidget {
     );
   }
 
-  _taskCardDisplayer(context) {
+  _taskCardDisplayer(context, MainViewModel viewModel) {
     return Container(
       width: MediaQuery.sizeOf(context).width * 0.95,
       height: MediaQuery.sizeOf(context).height * 0.12,
@@ -127,13 +128,7 @@ class MainView extends StatelessWidget {
                       fontSize: 17,
                       color: Theme.of(context).colorScheme.onPrimary),
                 ),
-                Text(
-                  '2/7 tasks',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.onPrimary),
-                )
+                Text('1${viewModel.allTasks.length} Tasks')
               ],
             ),
           ),
@@ -144,314 +139,220 @@ class MainView extends StatelessWidget {
     );
   }
 
-  _inProgressTasks(BuildContext context) {
-    return ViewModelBuilder<MainViewModel>.reactive(
-      viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getInCompeleteTasks(),
-      builder: (context, viewModel, child) {
-        if (viewModel.isBusy) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (viewModel.hasError) {
-          return Center(child: Text('Error: ${viewModel.error}'));
-        }
-
-        List<TaskModel> tasks = viewModel.inCompleteTasks;
-
-        if (tasks.isEmpty) {
-          return Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-              ),
-              height: MediaQuery.of(context).size.height * 0.35,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'In Progress',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.1,
-                  ),
-                  const Center(child: Text('No tasks in progress.')),
-                ],
-              ));
-        }
-
-        return Container(
+  _inProgressTasks(BuildContext context, MainViewModel viewModel) {
+    if (viewModel.inCompleteTasks.isEmpty) {
+      return Container(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.05,
           ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'In Progress',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text('${viewModel.inCompleteTasks.length}'),
-                      const Icon(Icons.navigate_next_rounded),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.33,
-                child: ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return TaskCard(task: task);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  _completedTask(BuildContext context) {
-    return ViewModelBuilder<MainViewModel>.reactive(
-      viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getCompeleteTasks(),
-      builder: (context, viewModel, child) {
-        if (viewModel.isBusy) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (viewModel.hasError) {
-          return Center(child: Text('Error: ${viewModel.error}'));
-        }
-
-        List<TaskModel> tasks = viewModel.completeTasks;
-
-        if (tasks.isEmpty) {
-          return Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-              ),
-              height: MediaQuery.of(context).size.height * 0.35,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.022,
-                  ),
-                  Text(
-                    'Compeleted',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.1,
-                  ),
-                  const Center(child: Text('No tasks in progress.')),
-                ],
-              ));
-        }
-
-        return Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-          ),
+          height: MediaQuery.of(context).size.height * 0.35,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Compeleted',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text('${viewModel.completeTasks.length}'),
-                      const Icon(Icons.navigate_next_rounded),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.15,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return MiniCard(task: task);
-                  },
+              Text(
+                'In Progress',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondary,
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.1,
+              ),
+              const Center(child: Text('No tasks in progress.')),
+            ],
+          ));
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'In Progress',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+              Row(
+                children: [
+                  Text('${viewModel.inCompleteTasks.length}'),
+                  const Icon(Icons.navigate_next_rounded),
+                ],
               ),
             ],
           ),
-        );
-      },
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.01,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.33,
+            child: ListView.builder(
+              itemCount: viewModel.inCompleteTasks.length,
+              itemBuilder: (context, index) {
+                final task = viewModel.inCompleteTasks[index];
+                return TaskCard(task: task);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  _lateTasks(context) {
-    return ViewModelBuilder<MainViewModel>.reactive(
-      viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getLateTasks(),
-      builder: (context, viewModel, child) {
-        if (viewModel.isBusy) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (viewModel.hasError) {
-          return Center(child: Text('Error: ${viewModel.error}'));
-        }
-
-        List<TaskModel> tasks = viewModel.lateTasks;
-
-        if (tasks.isEmpty) {
-          return Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-              ),
-              height: MediaQuery.of(context).size.height * 0.35,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.022,
-                  ),
-                  Text(
-                    'Late',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.1,
-                  ),
-                  const Center(child: Text('No late Task.')),
-                ],
-              ));
-        }
-
-        return Container(
+  _completedTask(BuildContext context, MainViewModel viewModel) {
+    if (viewModel.completeTasks.isEmpty) {
+      return Container(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.05,
           ),
+          height: MediaQuery.of(context).size.height * 0.35,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Late ',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text('${viewModel.lateTasks.length}'),
-                      const Icon(Icons.navigate_next_rounded),
-                    ],
-                  ),
-                ],
-              ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
+                height: MediaQuery.sizeOf(context).height * 0.022,
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.15,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return MiniCard(task: task);
-                  },
+              Text(
+                'Compeleted',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondary,
                 ),
+              ),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.1,
+              ),
+              const Center(child: Text('No tasks in progress.')),
+            ],
+          ));
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Compeleted',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+              Row(
+                children: [
+                  Text('${viewModel.completeTasks.length}'),
+                  const Icon(Icons.navigate_next_rounded),
+                ],
               ),
             ],
           ),
-        );
-      },
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.01,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: viewModel.completeTasks.length,
+              itemBuilder: (context, index) {
+                final task = viewModel.completeTasks[index];
+                return MiniCard(task: task);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _lateTasks(context, MainViewModel viewModel) {
+    if (viewModel.lateTasks.isEmpty) {
+      return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+          ),
+          height: MediaQuery.of(context).size.height * 0.35,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.022,
+              ),
+              Text(
+                'Late',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.1,
+              ),
+              const Center(child: Text('No late Task.')),
+            ],
+          ));
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Late ',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              Row(
+                children: [
+                  Text('${viewModel.lateTasks.length}'),
+                  const Icon(Icons.navigate_next_rounded),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.01,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: viewModel.lateTasks.length,
+              itemBuilder: (context, index) {
+                final task = viewModel.lateTasks[index];
+                return MiniCard(task: task);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-// Expanded(
-//               child: DefaultTabController(
-//                 length: Category.values.length,
-//                 child: Column(
-//                   children: [
-//                     ButtonsTabBar(
-//                       radius: 20,
-//                       borderWidth: 0.1,
-//                       buttonMargin: EdgeInsets.symmetric(
-//                           horizontal: MediaQuery.sizeOf(context).width * 0.05),
-//                       contentPadding: const EdgeInsets.symmetric(
-//                         horizontal: 15,
-//                       ),
-//                       backgroundColor: Theme.of(context).colorScheme.primary,
-//                       unselectedBackgroundColor:
-//                           Theme.of(context).colorScheme.onPrimary,
-//                       unselectedLabelStyle: TextStyle(
-//                           color: Theme.of(context).colorScheme.onSecondary),
-//                       labelStyle: TextStyle(
-//                           color: Theme.of(context).colorScheme.onPrimary),
-//                       tabs: const [
-//                         Tab(text: 'All Tasks'),
-//                         Tab(text: 'Personal'),
-//                         Tab(text: 'Work'),
-//                         Tab(text: 'Study'),
-//                       ],
-//                     ),
-//                     SizedBox(
-//                       height: MediaQuery.sizeOf(context).height * 0.02,
-//                     ),
-//                     // TabBarView to display content for each tab
-//                     const Expanded(
-//                       child: TabBarView(
-//                         children: [
-//                           Center(child: Text('All Tasks Content')),
-//                           Center(child: Text('Personal Tasks Content')),
-//                           Center(child: Text('Work Tasks Content')),
-//                           Center(child: Text('Study Tasks Content')),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             );

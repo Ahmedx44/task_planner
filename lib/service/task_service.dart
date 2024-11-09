@@ -13,6 +13,7 @@ abstract class TaskService {
   Future<Either<String, List<TaskModel>>> getIncompleteTasks();
   Future<Either<String, List<TaskModel>>> getCompleteTasks();
   Future<Either<String, List<TaskModel>>> getLateTasks();
+  Future<Either<String, String>> compeleteTask(String id);
 }
 
 @LazySingleton(as: TaskService)
@@ -215,6 +216,19 @@ class TaskServiceImpl extends TaskService {
       } else {
         return const Left('User document does not exist');
       }
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, String>> compeleteTask(String id) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(id)
+          .update({'isCompleted': true});
+      return const Right('Successfully updated');
     } catch (e) {
       return Left(e.toString());
     }
