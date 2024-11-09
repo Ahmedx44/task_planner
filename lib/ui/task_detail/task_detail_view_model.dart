@@ -16,4 +16,16 @@ class TaskDetailViewModel extends BaseViewModel {
           .showSnackBar(SnackBar(content: Text(suceess.toString())));
     });
   }
+
+  deleteTask(BuildContext context, String id) async {
+    final result = await locator<TaskService>().deleteTask(id);
+
+    result.fold((error) {
+      return ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+    }, (suceess) {
+      return ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(suceess.toString())));
+    });
+  }
 }

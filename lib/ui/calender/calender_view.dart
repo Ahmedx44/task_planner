@@ -12,7 +12,7 @@ class CalendarVieww extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<CalendarViewModel>.reactive(
       viewModelBuilder: () => CalendarViewModel(),
-      onViewModelReady: (model) => model.loadUserTasks(),
+      onViewModelReady: (model) => model.initializeData(),
       builder: (context, model, child) {
         final textColor = Theme.of(context).colorScheme.onBackground;
 

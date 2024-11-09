@@ -5,58 +5,103 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/service/task_service.dart';
+import 'dart:async';
 
 @injectable
 class CalendarViewModel extends BaseViewModel {
-  List<DateTime> dates = [];
-  DateTime selectedDate = DateTime.now();
-  List<TaskModel> tasks = [];
+  final TaskService _taskService = locator<TaskService>();
+
+  // Stream subscription
+  StreamSubscription? _taskSubscription;
+
+  // State variables
+  List<DateTime> _dates = [];
+  List<DateTime> get dates => _dates;
+
+  DateTime _selectedDate = DateTime.now();
+  DateTime get selectedDate => _selectedDate;
+
+  List<TaskModel> _tasks = [];
+  List<TaskModel> get tasks => _tasks;
+
+  List<Appointment> get appointments => _tasks.map((task) {
+        return Appointment(
+          startTime: task.startTime,
+          endTime: task.endTime,
+          subject: task.title,
+          color: task.color ?? Colors.grey, // Default color if none is set
+        );
+      }).toList();
 
   CalendarViewModel() {
     _generateDates();
+    initializeData();
   }
 
-  List<Appointment> get appointments {
-    return tasks.map((task) {
-      return Appointment(
-        startTime: task.startTime,
-        endTime: task.endTime,
-        subject: task.title,
-        color: task.color ?? Colors.grey, // Default color if none is set
-      );
-    }).toList();
-  }
-
-  Future<void> loadUserTasks() async {
+  Future<void> initializeData() async {
     setBusy(true);
-    final result = await locator<TaskService>().getUserTasks();
-    result.fold(
-      (failure) {
-        print('Error: $failure');
+    try {
+      _setupTaskStream();
+    } catch (e) {
+      setError(e.toString());
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  void _setupTaskStream() {
+    // Cancel existing subscription if any
+    _taskSubscription?.cancel();
+
+    // Setup new subscription
+    _taskSubscription = _taskService.getUserTasks().listen(
+      (result) {
+        result.fold(
+          (error) => setError(error),
+          (tasks) {
+            _tasks = tasks;
+            notifyListeners();
+          },
+        );
       },
-      (tasks) {
-        this.tasks = tasks; // Update the tasks list
-      },
+      onError: (error) => setError(error.toString()),
     );
-    setBusy(false);
-    notifyListeners();
   }
 
   void selectDate(DateTime date) {
-    selectedDate = date;
+    _selectedDate = date;
     notifyListeners();
   }
 
   void onTaskTapped(TaskModel task) {
-    print('Task tapped: ${task.title}');
     // Handle task tapped. You can navigate or show details.
+    print('Task tapped: ${task.title}');
   }
 
   void _generateDates() {
     final now = DateTime.now();
-    for (int i = -7; i <= 7; i++) {
-      dates.add(now.add(Duration(days: i)));
-    }
+    _dates = List.generate(
+      15,
+      (index) => now.add(Duration(days: index - 7)),
+    );
     notifyListeners();
+  }
+
+  // Refresh data manually if needed
+  Future<void> refreshData() async {
+    setBusy(true);
+    try {
+      _setupTaskStream();
+    } catch (e) {
+      setError(e.toString());
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _taskSubscription?.cancel();
+    super.dispose();
   }
 }

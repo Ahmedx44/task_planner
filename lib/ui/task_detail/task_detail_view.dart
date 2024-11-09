@@ -164,7 +164,7 @@ class TaskDetailView extends StatelessWidget {
                 // Delete Task Button
                 OutlinedButton(
                   onPressed: () {
-                    // Add your delete task logic here
+                    viewModel.deleteTask(context, task.id);
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.red),

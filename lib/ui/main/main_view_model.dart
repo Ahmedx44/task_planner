@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/service/task_service.dart';
 import 'package:todo_app/ui/new_task/newTask_view.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
 
 class MainViewModel extends BaseViewModel {
-  final _taskService = locator<TaskService>();
+  final TaskService _taskService = locator<TaskService>();
 
-  List<TaskModel> _inCompleteTasks = [];
-  List<TaskModel> get inCompleteTasks => _inCompleteTasks;
+  // Stream subscriptions
+  List<StreamSubscription> _subscriptions = [];
+
+  // Task lists
+  List<TaskModel> _incompleteTasks = [];
+  List<TaskModel> get incompleteTasks => _incompleteTasks;
 
   List<TaskModel> _completeTasks = [];
   List<TaskModel> get completeTasks => _completeTasks;
@@ -22,77 +26,117 @@ class MainViewModel extends BaseViewModel {
   List<TaskModel> _allTasks = [];
   List<TaskModel> get allTasks => _allTasks;
 
+  // Initialize data streams
   Future<void> initializeData() async {
-    await refreshContent();
-  }
-
-  void showCreateNewTask(BuildContext context) async {
-    await showModalBottomSheet(
-      isScrollControlled: true,
-      useSafeArea: true,
-      context: context,
-      builder: (context) => const NewtaskView(),
-    );
-    // Refresh data after adding new task
-    await refreshContent();
-  }
-
-  Future<void> getAllTasks() async {
-    final result = await locator<TaskService>().getUserTasks();
-    result.fold((sucess) {}, (sucess) {
-      _allTasks = sucess;
-    });
-  }
-
-  Future<void> refreshContent() async {
     setBusy(true);
     try {
-      await Future.wait([
-        fetchIncompleteTasks(),
-        fetchCompleteTasks(),
-        fetchLateTasks(),
-      ]);
+      // Setup stream listeners
+      _setupTaskStreams();
     } catch (e) {
-      setError(e);
+      setError(e.toString());
     } finally {
       setBusy(false);
     }
   }
 
-  Future<void> fetchIncompleteTasks() async {
-    final result = await _taskService.getIncompleteTasks();
-    result.fold(
-      (error) => setError(error),
-      (tasks) {
-        _inCompleteTasks = tasks;
-        notifyListeners();
-      },
+  void _setupTaskStreams() {
+    // Clear existing subscriptions
+    _clearSubscriptions();
+
+    // Listen to incomplete tasks
+    _subscriptions.add(
+      _taskService.getIncompleteTasks().listen(
+        (result) {
+          result.fold(
+            (error) => setError(error),
+            (tasks) {
+              _incompleteTasks = tasks;
+              notifyListeners();
+            },
+          );
+        },
+        onError: (error) => setError(error.toString()),
+      ),
+    );
+
+    // Listen to complete tasks
+    _subscriptions.add(
+      _taskService.getCompleteTasks().listen(
+        (result) {
+          result.fold(
+            (error) => setError(error),
+            (tasks) {
+              _completeTasks = tasks;
+              notifyListeners();
+            },
+          );
+        },
+        onError: (error) => setError(error.toString()),
+      ),
+    );
+
+    // Listen to late tasks
+    _subscriptions.add(
+      _taskService.getLateTasks().listen(
+        (result) {
+          result.fold(
+            (error) => setError(error),
+            (tasks) {
+              _lateTasks = tasks;
+              notifyListeners();
+            },
+          );
+        },
+        onError: (error) => setError(error.toString()),
+      ),
+    );
+
+    // Listen to all tasks
+    _subscriptions.add(
+      _taskService.getUserTasks().listen(
+        (result) {
+          result.fold(
+            (error) => setError(error),
+            (tasks) {
+              _allTasks = tasks;
+              notifyListeners();
+            },
+          );
+        },
+        onError: (error) => setError(error.toString()),
+      ),
     );
   }
 
-  Future<void> fetchCompleteTasks() async {
-    final result = await _taskService.getCompleteTasks();
-    result.fold(
-      (error) => setError(error),
-      (tasks) {
-        _completeTasks = tasks;
-        notifyListeners();
-      },
-    );
+  void _clearSubscriptions() {
+    for (var subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
   }
 
-  Future<void> fetchLateTasks() async {
-    final result = await _taskService.getLateTasks();
-    result.fold(
-      (error) => setError(error),
-      (tasks) {
-        _lateTasks = tasks;
-        notifyListeners();
-      },
+  Future<void> showCreateNewTask(BuildContext context) async {
+    final result = await showModalBottomSheet<bool>(
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => const NewtaskView(),
     );
+
+    // Only refresh if a task was actually created
+    if (result == true) {
+      // No need to manually refresh as streams will automatically update
+      notifyListeners();
+    }
   }
 
-  navigateToDetail(BuildContext context, TaskModel task) {
+  void navigateToDetail(BuildContext context, TaskModel task) {
     context.push('/task_detail', extra: task);
+  }
+
+  @override
+  void dispose() {
+    _clearSubscriptions();
+    super.dispose();
   }
 }
