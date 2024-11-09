@@ -26,45 +26,50 @@ class MainViewModel extends BaseViewModel {
     );
   }
 
-  getInCompeleteTasks(BuildContext context) async {
+  Future<void> getInCompeleteTasks() async {
     final result = await locator<TaskService>().getIncompleteTasks();
-
-    result.fold((error) {
-      print(error);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Theme.of(context).colorScheme.onSecondary,
-          content: Text(error.toString())));
-    }, (success) {
-      _inCompleteTasks = success;
-      notifyListeners();
-    });
+    result.fold(
+      (error) {
+        print(error);
+      },
+      (success) {
+        _inCompleteTasks = success;
+        notifyListeners();
+      },
+    );
   }
 
-  getCompeleteTasks(BuildContext context) async {
+  Future<void> getCompeleteTasks() async {
     final result = await locator<TaskService>().getCompleteTasks();
-
-    result.fold((error) {
-      print(error);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Theme.of(context).colorScheme.onSecondary,
-          content: Text(error.toString())));
-    }, (success) {
-      _completeTasks = success;
-      notifyListeners();
-    });
+    result.fold(
+      (error) {
+        print(error);
+      },
+      (success) {
+        _completeTasks = success;
+        notifyListeners();
+      },
+    );
   }
 
-  getLateTasks(BuildContext context) async {
+  Future<void> getLateTasks() async {
     final result = await locator<TaskService>().getLateTasks();
+    result.fold(
+      (error) {
+        print(error);
+      },
+      (success) {
+        _lateTasks = success;
+        notifyListeners();
+      },
+    );
+  }
 
-    result.fold((error) {
-      print(error);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Theme.of(context).colorScheme.onSecondary,
-          content: Text(error.toString())));
-    }, (success) {
-      _lateTasks = success;
-      notifyListeners();
-    });
+  Future<void> refreshContent() async {
+    await Future.wait([
+      getInCompeleteTasks(),
+      getLateTasks(),
+      getCompeleteTasks(),
+    ]);
   }
 }

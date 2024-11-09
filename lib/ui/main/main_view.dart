@@ -16,84 +16,89 @@ class MainView extends StatelessWidget {
     return ViewModelBuilder.nonReactive(
       viewModelBuilder: () => MainViewModel(),
       builder: (context, viewModel, child) {
-        return Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.01,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Welcome, ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary,
-                                    fontSize: 22),
-                              ),
-                              Text(
-                                'Ahmed',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 17,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary),
-                              )
-                            ],
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                CupertinoIcons.time,
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary,
-                              ))
-                        ],
+        return RefreshIndicator(
+          onRefresh: viewModel.refreshContent,
+          child: Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.01,
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Welcome, ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                      fontSize: 22),
+                                ),
+                                Text(
+                                  'Ahmed',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 17,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary),
+                                )
+                              ],
+                            ),
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  CupertinoIcons.time,
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                ))
+                          ],
+                        ),
+                      ),
 
-                    //Task current
-                    _taskCardDisplayer(context),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.03,
-                    ),
+                      //Task current
+                      _taskCardDisplayer(context),
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.03,
+                      ),
 
-                    //Current Inprogress Tasks
-                    _inProgressTasks(context),
-                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+                      //Current Inprogress Tasks
+                      _inProgressTasks(context),
+                      SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.03),
 
-                    //Completed Tasks
-                    _completedTask(context),
-                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+                      //Completed Tasks
+                      _completedTask(context),
+                      SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.03),
 
-                    //Missed Tasks
-                    _lateTasks(context)
-                  ],
+                      //Missed Tasks
+                      _lateTasks(context)
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              viewModel.showCreateNewTask(context);
-            },
-            shape: const CircleBorder(),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: const Icon(
-              CupertinoIcons.add,
-              color: Colors.white,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                viewModel.showCreateNewTask(context);
+              },
+              shape: const CircleBorder(),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: const Icon(
+                CupertinoIcons.add,
+                color: Colors.white,
+              ),
             ),
           ),
         );
@@ -142,7 +147,7 @@ class MainView extends StatelessWidget {
   _inProgressTasks(BuildContext context) {
     return ViewModelBuilder<MainViewModel>.reactive(
       viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getInCompeleteTasks(context),
+      onViewModelReady: (viewModel) => viewModel.getInCompeleteTasks(),
       builder: (context, viewModel, child) {
         if (viewModel.isBusy) {
           return const Center(child: CircularProgressIndicator());
@@ -227,7 +232,7 @@ class MainView extends StatelessWidget {
   _completedTask(BuildContext context) {
     return ViewModelBuilder<MainViewModel>.reactive(
       viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getCompeleteTasks(context),
+      onViewModelReady: (viewModel) => viewModel.getCompeleteTasks(),
       builder: (context, viewModel, child) {
         if (viewModel.isBusy) {
           return const Center(child: CircularProgressIndicator());
@@ -317,7 +322,7 @@ class MainView extends StatelessWidget {
   _lateTasks(context) {
     return ViewModelBuilder<MainViewModel>.reactive(
       viewModelBuilder: () => MainViewModel(),
-      onViewModelReady: (viewModel) => viewModel.getLateTasks(context),
+      onViewModelReady: (viewModel) => viewModel.getLateTasks(),
       builder: (context, viewModel, child) {
         if (viewModel.isBusy) {
           return const Center(child: CircularProgressIndicator());

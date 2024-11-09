@@ -16,33 +16,43 @@ class HomeView extends StatelessWidget {
     return ViewModelBuilder<HomeViewModel>.reactive(
       viewModelBuilder: () => HomeViewModel(),
       builder: (context, viewModel, child) => Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          bottomNavigationBar: BottomBarDefault(
-              paddingVertical: 25,
-              items: const [
-                TabItem(icon: CupertinoIcons.home),
-                TabItem(icon: CupertinoIcons.calendar),
-                TabItem(icon: CupertinoIcons.mic),
-                TabItem(icon: CupertinoIcons.person),
-              ],
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              color: Theme.of(context).colorScheme.onSecondary,
-              indexSelected: viewModel.selectedIndex,
-              colorSelected: Theme.of(context).colorScheme.primary,
-              onTap: (int index) => viewModel.setSelectedIndex(index)),
-          body: selectedPage(viewModel.selectedIndex)),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        bottomNavigationBar: BottomBarDefault(
+          paddingVertical: 25,
+          items: const [
+            TabItem(icon: CupertinoIcons.home),
+            TabItem(icon: CupertinoIcons.calendar),
+            TabItem(icon: CupertinoIcons.mic),
+            TabItem(icon: CupertinoIcons.person),
+          ],
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          color: Theme.of(context).colorScheme.onSecondary,
+          indexSelected: viewModel.selectedIndex,
+          colorSelected: Theme.of(context).colorScheme.primary,
+          onTap: (int index) => viewModel.setSelectedIndex(index),
+        ),
+        body: IndexedStack(
+          index: viewModel.selectedIndex,
+          children: const [
+            MainView(),
+            CalendarVieww(),
+            AudioView(),
+            ProfileView(),
+          ],
+        ),
+      ),
     );
   }
+}
 
-  selectedPage(index) {
-    if (index == 0) {
-      return const MainView();
-    } else if (index == 1) {
-      return CalendarVieww();
-    } else if (index == 2) {
-      return AudioView();
-    } else if (index == 3) {
-      return const ProfileView();
-    }
+selectedPage(index) {
+  if (index == 0) {
+    return const MainView();
+  } else if (index == 1) {
+    return CalendarVieww();
+  } else if (index == 2) {
+    return AudioView();
+  } else if (index == 3) {
+    return const ProfileView();
   }
 }
