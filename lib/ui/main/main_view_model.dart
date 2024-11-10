@@ -10,7 +10,11 @@ import 'dart:async';
 class MainViewModel extends BaseViewModel {
   final TaskService _taskService = locator<TaskService>();
 
-  // Stream subscriptions
+  //streamsubsscription is used to listen too stream of data,this will enbale the viewmodel
+  //this will enable to react to the changes in the
+
+  //It is a collection of items that can store multiple StreamSubscription objects. Each StreamSubscription represents
+  // a connection to a stream that listens for events (such as new data, errors, or completion).
   List<StreamSubscription> _subscriptions = [];
 
   // Task lists
@@ -40,10 +44,8 @@ class MainViewModel extends BaseViewModel {
   }
 
   void _setupTaskStreams() {
-    // Clear existing subscriptions
     _clearSubscriptions();
 
-    // Listen to incomplete tasks
     _subscriptions.add(
       _taskService.getIncompleteTasks().listen(
         (result) {
@@ -112,6 +114,8 @@ class MainViewModel extends BaseViewModel {
     for (var subscription in _subscriptions) {
       subscription.cancel();
     }
+
+    //This ensures that the list no longer holds references to the canceled subscriptions.
     _subscriptions.clear();
   }
 

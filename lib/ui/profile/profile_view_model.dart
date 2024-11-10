@@ -201,4 +201,8 @@ class ProfileViewModel extends BaseViewModel {
       );
     }
   }
+
+  navigateToLicence(BuildContext context) {
+    context.push('/license');
+  }
 }

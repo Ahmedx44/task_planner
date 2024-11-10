@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/ui/task_detail/task_detail_view_model.dart';
+import 'package:go_router/go_router.dart';
 
 class PackagesPage extends StatelessWidget {
   PackagesPage({Key? key}) : super(key: key);
 
-  // List of packages with their names and links
   final List<Map<String, String>> packages = [
     {'name': 'Flutter', 'link': 'https://flutter.dev'},
     {'name': 'Firebase Auth', 'link': 'https://pub.dev/packages/firebase_auth'},
@@ -73,17 +74,29 @@ class PackagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Packages Used'),
+        centerTitle: true,
+        leading: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_outlined,
+              color: Theme.of(context).colorScheme.onSecondary,
+            )),
+        title: Text(
+          'Packages Used',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+        ),
       ),
       body: ListView.builder(
         itemCount: packages.length,
         itemBuilder: (context, index) {
           final package = packages[index];
           return ListTile(
-            title: Text(package['name']!),
-            trailing: IconButton(
-              icon: const Icon(Icons.open_in_new),
-              onPressed: () {},
+            title: Text(
+              package['name']!,
+              style:
+                  TextStyle(color: Theme.of(context).colorScheme.onSecondary),
             ),
           );
         },

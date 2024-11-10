@@ -1,12 +1,11 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_themes/stacked_themes.dart';
-import 'package:todo_app/assets/app_image.dart';
-import 'package:todo_app/theme/theme.dart';
+
 import 'package:todo_app/theme/theme_view_Model.dart';
 import 'package:todo_app/ui/profile/profile_view_model.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -201,11 +200,6 @@ Widget _settingSection(BuildContext context) {
 }
 
 Widget _aboutSection(context) {
-  bool toggleON = true;
-  switchToggle() {
-    toggleON = !toggleON;
-  }
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -257,40 +251,46 @@ Widget _aboutSection(context) {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                context.go('/licenses');
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width * 0.04),
-                margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.sizeOf(context).height * 0.02),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
+            ViewModelBuilder.reactive(
+              viewModelBuilder: () => ProfileViewModel(),
+              builder: (context, viewModel, child) {
+                return GestureDetector(
+                  onTap: () {
+                    viewModel.navigateToLicence(context);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.sizeOf(context).width * 0.04),
+                    margin: EdgeInsets.symmetric(
+                        vertical: MediaQuery.sizeOf(context).height * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.health_and_safety_sharp,
-                          color: Theme.of(context).colorScheme.primary,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.health_and_safety_sharp,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.sizeOf(context).width * 0.02,
+                            ),
+                            Text(
+                              'Licenses',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          width: MediaQuery.sizeOf(context).width * 0.02,
-                        ),
-                        Text(
-                          'Licenses',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontWeight: FontWeight.bold),
-                        )
+                        const Icon(Icons.navigate_next_outlined)
                       ],
                     ),
-                    const Icon(Icons.navigate_next_outlined)
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             GestureDetector(
               child: Container(
