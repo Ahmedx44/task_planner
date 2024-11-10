@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stacked_themes/stacked_themes.dart';
 import 'package:todo_app/app/locator.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/model/task_model.dart';
@@ -13,6 +14,8 @@ import 'package:todo_app/ui/onboarding/onboarding_view.dart';
 import 'package:todo_app/ui/task_detail/task_detail_view.dart';
 
 void main() async {
+  // Initialize the ThemeManager with light and dark themes
+  await ThemeManager.initialise();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupLocator();
@@ -54,11 +57,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router,
-      theme: lightMode,
+    return ThemeBuilder(
       darkTheme: darkMode,
+      lightTheme: lightMode,
+      builder: (context, theme, darkTheme, themeMode) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: _router,
+          theme: theme, // Light theme provided by ThemeBuilder
+          darkTheme: darkTheme, // Dark theme provided by ThemeBuilder
+          themeMode: themeMode, // ThemeMode provided by ThemeBuilder
+        );
+      },
     );
   }
 }

@@ -1,7 +1,11 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked/stacked.dart';
+import 'package:stacked_themes/stacked_themes.dart';
 import 'package:todo_app/assets/app_image.dart';
+import 'package:todo_app/theme/theme.dart';
+import 'package:todo_app/theme/theme_view_Model.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -167,11 +171,8 @@ Widget _profileSection(context) {
   );
 }
 
-Widget _settingSection(context) {
-  bool toggleON = true;
-  switchToggle() {
-    toggleON = !toggleON;
-  }
+Widget _settingSection(BuildContext context) {
+  final themeManager = getThemeManager(context);
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,83 +180,106 @@ Widget _settingSection(context) {
       Text(
         'Setting',
         style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Theme.of(context).colorScheme.onSecondary),
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
       ),
       SizedBox(
         height: MediaQuery.sizeOf(context).height * 0.02,
       ),
       Container(
         padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.sizeOf(context).height * 0.01),
+          vertical: MediaQuery.sizeOf(context).height * 0.01,
+        ),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Theme.of(context).colorScheme.onPrimary),
+          borderRadius: BorderRadius.circular(20),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         child: Column(
           children: [
+            // Language Setting Option
             GestureDetector(
               child: Container(
                 padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width * 0.04),
-                margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.sizeOf(context).height * 0.02),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(CupertinoIcons.globe,
-                            color: Theme.of(context).colorScheme.primary),
-                        SizedBox(
-                          width: MediaQuery.sizeOf(context).width * 0.02,
-                        ),
-                        Text(
-                          'Language',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    const Icon(Icons.navigate_next_outlined)
-                  ],
+                  horizontal: MediaQuery.sizeOf(context).width * 0.04,
                 ),
-              ),
-            ),
-            GestureDetector(
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width * 0.04),
                 margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.sizeOf(context).height * 0.02),
+                  vertical: MediaQuery.sizeOf(context).height * 0.02,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Icon(
-                          CupertinoIcons.moon,
+                          CupertinoIcons.globe,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         SizedBox(
                           width: MediaQuery.sizeOf(context).width * 0.02,
                         ),
                         Text(
-                          'Dark Mode',
+                          'Language',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontWeight: FontWeight.bold),
-                        )
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSecondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
-                    CupertinoSwitch(value: toggleON, onChanged: switchToggle())
+                    const Icon(Icons.navigate_next_outlined),
                   ],
                 ),
               ),
-            )
+            ),
+            // Dark Mode Setting Option
+            ViewModelBuilder.reactive(
+              viewModelBuilder: () => ThemeViewModel(),
+              builder: (context, viewModel, child) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width * 0.04,
+                  ),
+                  margin: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).height * 0.02,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            CupertinoIcons.moon,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.sizeOf(context).width * 0.02,
+                          ),
+                          Text(
+                            'Dark Mode',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      CupertinoSwitch(
+                        // Ensure the switch is updated based on the current theme state
+                        value: themeManager.isDarkMode,
+                        onChanged: (value) {
+                          themeManager
+                              .toggleDarkLightTheme(); // This will toggle the theme
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -446,7 +470,7 @@ Widget _accountSection(context) {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.logout,
                           color: Colors.red,
                         ),

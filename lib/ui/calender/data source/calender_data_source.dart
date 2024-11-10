@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:todo_app/model/task_model.dart';
 
 class TaskCalendarDataSource extends CalendarDataSource {
   TaskCalendarDataSource(List<Appointment> tasks) {
