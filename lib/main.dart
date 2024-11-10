@@ -10,11 +10,11 @@ import 'package:todo_app/ui/auth/autGate/authGate_view.dart';
 import 'package:todo_app/ui/auth/login/login_view.dart';
 import 'package:todo_app/ui/auth/signup/signup_view.dart';
 import 'package:todo_app/ui/home/home_view.dart';
+import 'package:todo_app/ui/licenese/licenses.dart';
 import 'package:todo_app/ui/onboarding/onboarding_view.dart';
 import 'package:todo_app/ui/task_detail/task_detail_view.dart';
 
 void main() async {
-  // Initialize the ThemeManager with light and dark themes
   await ThemeManager.initialise();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -53,6 +53,12 @@ class MyApp extends StatelessWidget {
         return TaskDetailView(task: task);
       },
     ),
+    GoRoute(
+      path: '/license',
+      builder: (context, state) {
+        return PackagesPage();
+      },
+    )
   ]);
 
   @override

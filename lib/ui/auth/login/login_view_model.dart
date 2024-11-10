@@ -23,6 +23,7 @@ class LoginViewModel extends BaseViewModel {
         content: Text(error),
       ));
     }, (success) {
+      context.go('/home');
       setBusy(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: const Duration(seconds: 1),
@@ -41,6 +42,7 @@ class LoginViewModel extends BaseViewModel {
       return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(seconds: 1), content: Text(error.toString())));
     }, (success) {
+      context.go('/home');
       setBusy(false);
       return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           duration: Duration(seconds: 1),
