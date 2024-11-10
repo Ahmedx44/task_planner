@@ -10,11 +10,19 @@ class TaskDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder.reactive(
+    return ViewModelBuilder.nonReactive(
       viewModelBuilder: () => TaskDetailViewModel(),
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {
+                  viewModel.navigateBack(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                )),
             title: Text(
               'Task Details',
               style: TextStyle(
@@ -164,7 +172,7 @@ class TaskDetailView extends StatelessWidget {
                 // Delete Task Button
                 OutlinedButton(
                   onPressed: () {
-                    viewModel.deleteTask(context, task.id);
+                    viewModel.showDeleteDialog(context, task.id);
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.red),

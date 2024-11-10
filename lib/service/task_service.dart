@@ -200,7 +200,7 @@ class TaskServiceImpl extends TaskService {
           .collection('tasks')
           .doc(id)
           .update({'isCompleted': true});
-      return const Right('Successfully updated');
+      return const Right('Compeleted');
     } catch (e) {
       return Left(e.toString());
     }

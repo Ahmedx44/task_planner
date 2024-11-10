@@ -103,13 +103,6 @@ class MainView extends StatelessWidget {
               ),
             ],
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              CupertinoIcons.time,
-              color: Theme.of(context).colorScheme.onSecondary,
-            ),
-          ),
         ],
       ),
     );
@@ -135,7 +128,7 @@ class MainView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Today\'s Task',
+                  'Tasks',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
@@ -199,7 +192,7 @@ class MainView extends StatelessWidget {
       radius: 20,
       title: title,
       titleStyle: const TextStyle(
-        fontSize: 10,
+        fontSize: 7,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
@@ -242,12 +235,6 @@ class MainView extends StatelessWidget {
                   color:
                       titleColor ?? Theme.of(context).colorScheme.onSecondary,
                 ),
-              ),
-              Row(
-                children: [
-                  Text('${tasks.length}'),
-                  const Icon(Icons.navigate_next_rounded),
-                ],
               ),
             ],
           ),
